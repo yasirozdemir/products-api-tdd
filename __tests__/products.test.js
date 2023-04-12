@@ -22,7 +22,7 @@ const invalidProduct = {
 const updatedProduct = {
   name: "iPad",
   description: "Great tablet",
-  price: "1250",
+  price: 1250,
 };
 
 let validProductID;
@@ -47,13 +47,13 @@ describe("Test Products API", () => {
     expect(process.env.MONGO_TEST_URL).toBeDefined();
   });
 
-  // 1
+  // Ex. 1
   test("fetching all the producsts returns a response body & status code 200", async () => {
     const res = await client.get("/products").expect(200);
     expect(res.body).toBeDefined();
   });
 
-  //2
+  // Ex. 2
   test("creating a product is successful & returns status code 201", async () => {
     const res = await client.post("/products").send(validProduct).expect(201);
     expect(res.body._id).toBeDefined();
@@ -63,7 +63,7 @@ describe("Test Products API", () => {
     await client.post("/products").send(invalidProduct).expect(400);
   });
 
-  //3
+  // Ex. 3
   test("check a product with the specific ID is existed & returns it after found with a status 200", async () => {
     const res = await client.get(`/products/${validProductID}`).expect(200);
     expect(res.body._id).toBe(validProductID);
@@ -78,7 +78,7 @@ describe("Test Products API", () => {
     );
   });
 
-  //4
+  // Ex. 4
   test("delete with an ID returns status code 204", async () => {
     await client.delete(`/products/${validProductID}`).expect(204);
   });
@@ -87,7 +87,7 @@ describe("Test Products API", () => {
     await client.delete("/products/6436b1eb07ea3ce7806d1457").expect(404);
   });
 
-  //5 DOES THE ORDER MATTER???
+  // Ex. 5
   test("update a product with its ID returns status code 200", async () => {
     await client
       .put(`/products/${validProductID}`)
@@ -99,7 +99,7 @@ describe("Test Products API", () => {
     const res = await client
       .put(`/products/${validProductID}`)
       .send(updatedProduct);
-    expect(res.body.name).not.toBe(validProduct.name);
+    expect(res.body.name).not.toStrictEqual(validProduct.name);
   });
 
   test("typeof name in response body is string after updating", async () => {
@@ -111,5 +111,16 @@ describe("Test Products API", () => {
 
   test("update with a non-existing ID returns status code 404", async () => {
     await client.put("/products/6436b1eb07ea3ce7806d1457").expect(404);
+  });
+
+  // Ex. 6
+  test("request body is an empty object after deleting a product", async () => {
+    const res = await client.delete(`/products/${validProductID}`);
+    expect(res.body).toStrictEqual({});
+  });
+
+  test("getting a product by id right after creating it must return status code 200", async () => {
+    const res0 = await client.post("/products").send(validProduct);
+    await client.get(`/products/${res0.body._id}`).expect(200);
   });
 });
