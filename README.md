@@ -1,4 +1,6 @@
-# Products API created by Test-driven development (TDD) process
+# Products API
+
+Test-driven development (TDD) process had been used to create this API
 
 ## Available Scripts
 
